@@ -22,12 +22,12 @@ class block_enrol_token_manager extends block_base {
         $this->content->text = '';
         $content = array();
 
-        $cavniew = (has_capability('block/enrol_token_manager:viewtokens', $context) === true);
+        $canview = (has_capability('block/enrol_token_manager:viewtokens', $context) === true);
         $cancreate = (has_capability('block/enrol_token_manager:createtokens', $context) === true);
         $canrevoke = (has_capability('block/enrol_token_manager:revoketokens', $context) === true);
 
         // view tokens link
-        if ($cavniew) {
+        if ($canview) {
             $content[] = html_writer::link(new moodle_url('/blocks/enrol_token_manager/viewrevoke_tokens.php'), get_string('linkTextViewTokens', 'block_enrol_token_manager'));
         }
 
