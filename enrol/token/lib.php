@@ -163,8 +163,49 @@ class enrol_token_plugin extends enrol_plugin
         return $settings;
     }
 
+    // if you want to validate a token before enrolling with it
+    // $errors['token'] = enrol_token_plugin::getTokenValidationErrors($tokenValue);
+    // returns: a string containing the error message, or empty.
+    public static function getTokenValidationErrors($value) {
+        global $DB;
+        if ($row = $DB->get_record('enrol_token_tokens', array('id' => $value), 'courseid, seatsavailable, numseats, timeexpire')) {
+            $inst = self::getInstanceDataForCourse($row->courseid); // is static
+            if (!$inst) {
+                return 'Token enrolment is not yet set up for this course';
+                 // that's a showstopper, for sure
+
+            }
+            else if ($row->seatsavailable <= 0) {
+                return 'No places remaining on this token (' . $row->numseats . ' used)';
+                 // get_string('noseatsavailable', 'enrol_token');
+
+            }
+            else if (($row->timeexpire != 0) && ($row->timeexpire < time())) {
+                return 'Token has expired';
+                 //get_string('tokenexpired', 'enrol_token');
+
+            }
+            else if ($inst && enrol_token_plugin::isThrottled($value, $inst) === true) {
+                return get_string('toomanyattempts', 'enrol_token');
+            }
+            else if ($inst && $inst->enrolstartdate != 0 and $inst->enrolstartdate > time()) {
+                return 'Enrolment begins ' . userdate($inst->enrolstartdate);
+            }
+            else if ($inst && $inst->enrolstartdate != 0 and $inst->enrolstartdate < time()) {
+                return 'Enrolment ended ' . userdate($inst->enrolstartdate);
+            }
+            else if ($inst && !$inst->customint6) {
+                return 'Tokens have been disabled';
+            }
+            return '';
+        }
+        else {
+            return 'Invalid token (not found)';
+        }
+    }
+
     // check that ip address or user haven't entered too many enrolment tokens in a given period - this tries to stop token-guessing (manual or automated) attempts
-    public function isThrottled($token, $settings, $userId = null) {
+    public static function isThrottled($token, $settings, $userId = null) {
         global $DB;
 
         // ensure userId has a sane value
@@ -216,11 +257,15 @@ class enrol_token_plugin extends enrol_plugin
     }
 
     // returns token enrolment instance data for a given course
-    protected function getInstanceDataForCourse($courseId) {
+    protected static function getInstanceDataForCourse($courseId) {
 
         // get all enrol plugins available for course
         $enrolinstances = enrol_get_instances($courseId, true);
-        foreach ($enrolinstances as $instance) if ((isset($instance->enrol) === true) && ($instance->enrol == 'token')) return $instance;
+        foreach ($enrolinstances as $instance) {
+            if ((isset($instance->enrol) === true) && ($instance->enrol == 'token')) {
+                return $instance;
+            }
+        }
 
         return null;
     }
@@ -278,7 +323,8 @@ class enrol_token_plugin extends enrol_plugin
             // enrol the user in the course
             $this->enrol_user($settings, $USER->id, $settings->roleid, $timestart, $timeend);
             add_to_log($settings->courseid, 'course', 'enrol', '../enrol/users.php?id=' . $settings->courseid, $settings->courseid);
-             //TODO: There should be userid somewhere!
+
+            //TODO: There should be userid somewhere!
 
             // decrement the seats available on the token
             $tokenRec->seatsavailable--;
@@ -305,7 +351,9 @@ class enrol_token_plugin extends enrol_plugin
         if ($settings->customint4) $this->email_welcome_message($settings, $USER);
 
         return true;
-         // return SUCCESS
+
+        // return SUCCESS
+
 
     }
 
