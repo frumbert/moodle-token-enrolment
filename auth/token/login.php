@@ -22,6 +22,7 @@ $PAGE->verify_https_required();
 
 $courseid = optional_param('id', '', PARAM_INT);
 $redirectto = optional_param('redirectto', '', PARAM_RAW);
+$urlextra = '';
 
 if (!empty($redirectto)) {
     // $SESSION->coursehomeurl = $redirectto;
@@ -39,8 +40,11 @@ if ((isset($SESSION->wantsurl) === true) && ((strncmp($SESSION->wantsurl, $CFG->
 }
 
 $authplugin = get_auth_plugin("token");
-
 $mform_signup = $authplugin->signup_form();
+
+// if $mform_signup->is_submitted() ...
+// if $mform_signup->is_cancelled() ...
+// $mform_signup->get_data() will be empty until $mform_signup->is_validated() returns true
 
 if (($user = $mform_signup->get_data()) !== null) {
     $user->confirmed = 1;

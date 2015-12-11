@@ -7,7 +7,12 @@ class auth_plugin_token extends auth_plugin_base
 {
     function auth_plugin_token() {
         $this->authtype = 'token';
-        $this->config = get_config('auth/token');
+
+        // is config stored in 'auth/token' or 'auth_token' ?
+        $config = get_config('auth_token');
+        $legacyconfig = get_config('auth/token');
+        $this->config = (object)array_merge((array)$legacyconfig, (array)$config);
+
     }
 
 
@@ -52,6 +57,9 @@ class auth_plugin_token extends auth_plugin_base
         $supportuser = core_user::get_support_user();
         $newpassword = generate_password();
 
+        // the token the user entered (which is now validated)
+        $tokenValue = $user->token;
+
         $newuser = new stdClass();
         $newuser->auth = 'token'; // since technially this auth plugin is a skin
         $newuser->firstname = $user->firstname;
@@ -65,7 +73,7 @@ class auth_plugin_token extends auth_plugin_base
         $newuser->timemodified = $newuser->timecreated;
         $newuser->mnethostid = $CFG->mnet_localhost_id;
 
-        $newuser = truncate_user_obj($newuser);
+        $newuser = self::truncate_user_obj($newuser);
         if (($newuser->id = $DB->insert_record('user', $newuser)) === false) {
             notice(get_string('signupfailure', 'auth_token'), $CFG->wwwroot);
             return false;
@@ -73,15 +81,19 @@ class auth_plugin_token extends auth_plugin_base
         $user = get_complete_user_data('id', $newuser->id);
         \core\event\user_created::create_from_userid($user->id)->trigger();
 
-        // ok, so I'm going to re-use the $newuser object for our email message, since it's mostly what we want
+        // just the query part of post-login redirect
+        $params = (empty($SESSION->wantsurl) === true) ? '' : parse_url($SESSION->wantsurl, PHP_URL_QUERY);
+
         $a = new stdClass();
-        $a->username = $user->email;
+        $a->firstname = $user->firstname;
+        $a->lastname = $user->lastname;
+        $a->username = $user->username;
         $a->password = $newpassword;
         $a->sitename = format_string($site->fullname);
-        $a->link = $CFG->wwwroot . '/login/';
+        $a->link = $CFG->wwwroot . '/auth/token/login.php?' . $params;
         $a->signoff = generate_email_signoff();
 
-        $message = (string)new lang_string('signup_userregoemail', '', $a, $lang);
+        $message = (string)new lang_string('signup_userregoemail', 'auth_token', $a, $lang);
         $subject = format_string($site->fullname) .': '. (string)new lang_string('newusernewpasswordsubj', '', $a, $lang);
 
         // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
@@ -93,10 +105,17 @@ class auth_plugin_token extends auth_plugin_base
             return false;
         }
 
-        // if user was heading to a site page redirect to there, otherwise redirect to site home page
-        redirect((empty($SESSION->wantsurl) === true) ? $CFG->wwwroot : $SESSION->wantsurl);
+        // now, actually DO the enrolment for this course / user
+        $token_plugin = new enrol_token_plugin();
+        $courseId = 0;
+        $return_to_url = (empty($SESSION->wantsurl) === true) ? $CFG->wwwroot : $SESSION->wantsurl;
+        $enrolled_ok = $token_plugin->doEnrolment($tokenValue, $courseId, $return_to_url);
 
-        return true;
+        if ($enrolled_ok == true) {
+            redirect($return_to_url);
+        }
+
+        return ($enrolled_ok == true);
     }
 
     function signup_form() {
@@ -114,5 +133,39 @@ class auth_plugin_token extends auth_plugin_base
         $newuser->username = $newuser->email;
         return ($DB->update_record('user', $newuser) !== false);
     }
+
+    /**
+     * Prints a form for configuring this authentication plugin.
+     *
+     * This function is called from admin/auth.php, and outputs a full page with
+     * a form for configuring this plugin.
+     *
+     * @param array $config An object containing all the data for this page.
+     * @param string $error
+     * @param array $user_fields
+     * @return void
+     */
+    function config_form($config, $err, $user_fields) {
+        include 'config.html';
+    }
+
+    /**
+     * Processes and stores configuration data for this authentication plugin.
+     *
+     * @param stdClass $config
+     * @return void
+     */
+    function process_config($config) {
+        /*
+        if (!isset($config->logouturl)) {
+            $config->logouturl = 'http://www.avant.org.au/Risk-education/Risk/';
+        }
+        set_config('logouturl', $config->logouturl, 'auth_aurora');
+        */
+        return true;
+    }
+
+
+
 }
 

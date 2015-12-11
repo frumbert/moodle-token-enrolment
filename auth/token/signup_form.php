@@ -25,7 +25,7 @@ class login_signup_form extends moodleform
         $mform->addRule('username', '', 'required', null, 'server');
         //$mform->addRule('username', get_string('missingemail'), 'email', null, 'server');
 
-        // this is a HACK, but I couldn't find a better way to modify the callback message value
+        // this is a HACK, modify the callback message value
         /*
         $GLOBALS['tokenOk'] = true;
         $tokenMessage = get_string('signup_missingtoken', 'auth_token');
@@ -125,7 +125,11 @@ class login_signup_form extends moodleform
         require_once ($CFG->dirroot . '/enrol/token/lib.php');
 
         $tokenValue = $data['token'];
-        $errors['token'] = enrol_token_plugin::getTokenValidationErrors($tokenValue);
+        $tve = enrol_token_plugin::getTokenValidationErrors($tokenValue);
+
+        if (isset($tve) && $tve !== '') {
+            $errors['token'] = $tve;
+        }
 
         return $errors;
     }

@@ -35,3 +35,16 @@ can log in again using these details:
 
 Cheers from the \'{$a->sitename}\' administrator,
 {$a->signoff}';
+
+/*
+$string['signup_userregoemail_config_enabled'] = 'Signup email enabled?';
+$string['signup_userregoemail_config'] = 'Signup email message';
+$string['signup_userregoemail_config_desc'] = 'Possible merge field entries:
+{$a->firstname} - the users first name
+{$a->lastname} - the users last name
+{$a->username} - the users login
+{$a->password} - the users password
+{$a->link} - a link to the site login page
+{$a->sitename} - the name of this web site
+{$a->signoff} - the system email signoff';
+*/

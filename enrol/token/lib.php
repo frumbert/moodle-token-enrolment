@@ -210,10 +210,12 @@ class enrol_token_plugin extends enrol_plugin
 
         // ensure userId has a sane value
         if ($userId === null) $userId = 0;
+        $ip_throttling_period = isset($settings->ipthrottlingperiod) ? $settings->ipthrottlingperiod : 0;
+        $user_throttling_period = isset($settings->userthrottlingperiod) ? $settings->userthrottlingperiod : 0;
 
         // add a token usage record only if token in question hasn't been used recently by this user
-        if (($settings->ipthrottlingperiod > 0) && ($DB->record_exists_select('enrol_token_usage', 'ip = \'' . getremoteaddr() . '\' AND token = \'' . $token . '\' AND timecreated > ' . (time() - ($settings->ipthrottlingperiod * 60))) === false)) {
-            if (($userId !== 0) && ($settings->userthrottlingperiod > 0) && ($DB->record_exists_select('enrol_token_usage', 'userid = ' . $userId . ' AND token = \'' . $token . '\'  AND timecreated > ' . (time() - ($settings->userthrottlingperiod * 60))) === false)) {
+        if (($ip_throttling_period > 0) && ($DB->record_exists_select('enrol_token_usage', 'ip = \'' . getremoteaddr() . '\' AND token = \'' . $token . '\' AND timecreated > ' . (time() - ($ip_throttling_period * 60))) === false)) {
+            if (($userId !== 0) && ($user_throttling_period > 0) && ($DB->record_exists_select('enrol_token_usage', 'userid = ' . $userId . ' AND token = \'' . $token . '\'  AND timecreated > ' . (time() - ($user_throttling_period * 60))) === false)) {
 
                 // add token usage record
                 $tokenUsageRec = new stdClass();
@@ -226,12 +228,12 @@ class enrol_token_plugin extends enrol_plugin
         }
 
         // check if ip address should be throttled
-        if (($settings->ipthrottlingperiod > 0) && ($DB->count_records_select('enrol_token_usage', 'ip = \'' . getremoteaddr() . '\' AND timecreated > ' . (time() - ($settings->ipthrottlingperiod * 60))) > 10)) {
+        if (($ip_throttling_period > 0) && ($DB->count_records_select('enrol_token_usage', 'ip = \'' . getremoteaddr() . '\' AND timecreated > ' . (time() - ($ip_throttling_period * 60))) > 10)) {
             return true;
         }
 
         // check if user should be throttled
-        if (($userId !== 0) && ($settings->userthrottlingperiod > 0) && ($DB->count_records_select('enrol_token_usage', 'userid = ' . $userId . ' AND timecreated > ' . (time() - ($settings->userthrottlingperiod * 60))) > 10)) {
+        if (($userId !== 0) && ($user_throttling_period > 0) && ($DB->count_records_select('enrol_token_usage', 'userid = ' . $userId . ' AND timecreated > ' . (time() - ($user_throttling_period * 60))) > 10)) {
             return true;
         }
 
@@ -322,9 +324,6 @@ class enrol_token_plugin extends enrol_plugin
 
             // enrol the user in the course
             $this->enrol_user($settings, $USER->id, $settings->roleid, $timestart, $timeend);
-            add_to_log($settings->courseid, 'course', 'enrol', '../enrol/users.php?id=' . $settings->courseid, $settings->courseid);
-
-            //TODO: There should be userid somewhere!
 
             // decrement the seats available on the token
             $tokenRec->seatsavailable--;
