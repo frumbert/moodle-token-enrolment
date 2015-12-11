@@ -3,11 +3,17 @@ enrol users into moodle courses using one-time (or many-use) tokens.
 
 ## demo
 there's a demo that lets you quickly enrol a dummy user into a moodle site, and a list of tokens you can try.
-http://wp2moodle.coursesuite.ninja/token-enrolment/
+http://wp2moodle.coursesuite.ninja/token-enrolment/. This doesn't show all the functionality of this plugin pack yet...
 
 ##installation
 
-extract the folders into moodle; there's a block, and an enrolment plugin. You'll need to activate the plugins.
+extract the folders into moodle; there's a block, an auth plugin, and an enrolment plugin. You'll need to activate the plugins.
+
+## what the plugins do
+
+the block plugin lets admins or token managers quickly access the tools for generating and reporting on tokens
+the auth plugin lets users sign up with their email and a token. it generates a password and emails that to them but logs them in directly and opens the course the token is for. You can modify the email message using language string customisation. this requires the enrol plugin to be active and that token enrolment is enabled for the course(s).
+the enrol plugin is where the actual enrolment work happens, and has functionality of the course enrol screen.
 
 ##setup
 
