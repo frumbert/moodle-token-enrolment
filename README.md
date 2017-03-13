@@ -21,6 +21,7 @@ there's a demo that lets you quickly enrol a dummy user into a moodle site, and 
 http://wp2moodle.coursesuite.ninja/token-enrolment/.
 
 ##installation
+Note: last checked with Moodle 3.1.1+ but should be fine with 2.7 or above.
 extract the folders into moodle; there's a block, an auth plugin, and an enrolment plugin. You'll need to activate the plugins.
 
 ## what the plugins do
