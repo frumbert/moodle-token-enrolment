@@ -10,20 +10,27 @@ $string['nameentryinstructions'] = 'The name you enter below will appear on your
 
 $string['signupfailure'] = 'There was a problem signing you up. Please use the site contact details form to have an account created for you.';
 
-$string['signup_tokencode'] = 'Token code';
+$string['registerredirect'] = 'Url to redirect to after a successful registration';
+
+$string['signup_tokencode'] = 'Access token';
 $string['signup_email'] = 'Email';
 
-$string['signup_registerusing'] = 'Register using a token';
-$string['login_existingusers'] = 'Existing users log in';
+$string['signup_registerusing'] = 'Register';
+$string['login_existingusers'] = 'Login';
 
 $string['signup_tokencode_desc'] = 'Token code description';
 $string['signup_missingtoken'] = 'You need to enter your token';
 
 $string['signup_token_expired'] = 'Sorry, this token has expired';
 
-$string['signup_passwordemailed'] = 'Will be emailed to you';
+$string['signup_passwordemailed'] = 'This will be emailed to you on submission';
+
+$string['auth_token_noemail'] = 'Tried to send you an email but failed!';
+
+$string['auth_token_logonpage_intro'] = 'Logon page intro text';
 
 $string['signup_userregoemail'] = 'Hi {$a->firstname},
+
 
 Someone (probably you) has registered a new acount on the
 site \'{$a->sitename}\'. The account is ready to use, and you
