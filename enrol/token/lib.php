@@ -37,6 +37,11 @@ class enrol_token_plugin extends enrol_plugin
     protected $lasternoller = null;
     protected $lasternollerinstanceid = 0;
 
+    public function can_hide_show_instance($instance) {
+        $context = context_course::instance($instance->courseid);
+        return has_capability('enrol/token:config', $context);
+    }
+
     /**
      * Returns localised name of enrol instance
      *
@@ -509,7 +514,7 @@ class enrol_token_plugin extends enrol_plugin
             $contact = reset($rusers);
         }
         else {
-            $contact = generate_email_supportuser();
+            $contact = core_user::get_support_user();
         }
 
         // Directly emailing welcome message rather than using messaging.
