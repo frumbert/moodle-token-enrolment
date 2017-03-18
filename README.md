@@ -4,6 +4,7 @@ Note: Assumes email-based registrations with auto-generated passwords
 
 ## possible uses
 - Put a page / block behind a paywall that allows a user (such as a teacher) to generate tokens for their learners
+    - Use WooCommerce or MarketPress? Try https://github.com/frumbert/wooMoodleTokenEnrolment
 - Stop general registrations and limit them to only people who know the token code (sort of like a password for allowing registrations)
 - Prevent your learners from having to self-enrol in courses once they are signed up (so you don't have to also train them on how that works)
 - ... Profit?
