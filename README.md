@@ -28,6 +28,7 @@ extract the folders into moodle; there's a block, an auth plugin, and an enrolme
 the block plugin lets admins or token managers quickly access the tools for generating and reporting on tokens
 the auth plugin lets users sign up with their email and a token. it generates a password and emails that to them but logs them in directly and opens the course the token is for. You can modify the email message using language string customisation. this requires the enrol plugin to be active and that token enrolment is enabled for the course(s).
 the enrol plugin is where the actual enrolment work happens, and has functionality of the course enrol screen.
+the local plugin is a webservice that lets you generate tokens
 
 ##setup
 0. Install via site administration, then enable the plugin instances via the various Plugins sub-features (e.g. Site Admin > Plugins > Enrol > Manage enrolment plugins, etc)
