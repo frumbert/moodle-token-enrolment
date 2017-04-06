@@ -6,6 +6,8 @@ require_once ($CFG->libdir . '/accesslib.php');
 require_once ($CFG->libdir . '/datalib.php');
 require_once ($CFG->dirroot . '/cohort/lib.php');
 
+require_once ($CFG->dirroot . '/blocks/enrol_token_manager/locallib.php');
+
 class create_enrol_tokens_form extends moodleform
 {
 	function definition() {
@@ -103,24 +105,7 @@ class create_enrol_tokens_form extends moodleform
 	}
 }
 
-function enrolTokenManagerTokenContainsNaughtyWords($token) {
-	global $CFG;
 
-	// setup naughty words filter
-	static $badwords = '-';
-	if ($badwords == '-') {
-		$badwords = (empty($CFG->filter_censor_badwords)) ? explode(',', get_string('badwords', 'filter_censor')) : explode(',', $CFG->filter_censor_badwords);
-
-		foreach ($badwords as & $badword) $badword = trim($badword);
-	}
-
-	// see if any naughty words exist in the token
-	foreach ($badwords as $badword) {
-		if (stripos($token, $badword) !== false) return true;
-	}
-
-	return false;
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 $context = context_system::instance();
@@ -151,89 +136,21 @@ $form = new create_enrol_tokens_form();
 
 if (($data = $form->get_data()) === null) $form->display();
 else {
-	$tokens = array();
 
-	// ensure prefix is valid
-	if (strlen($data->prefix) > 4) $data->prefix = substr($data->prefix, 0, 4);
+	// make an array of tokens
+	$tokens = enrol_token_manager_generate_token_data($data->tokennumber, $data->prefix);
 
-	// generate number of tokens required
-	for ($count = 0; ($count < $data->tokennumber); ++$count) {
-
-		// (re-)generate each token until it is good (no bad words and not already existing)
-		for ($goodToken = false; ($goodToken === false);
-		 /* empty */
-		) {
-			$goodToken = false;
-
-			static $characters = '023456789abcdefghjkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ';
-
-			// generate random token
-			$token = $data->prefix;
-			while (strlen($token) < 9) $token.= $characters[rand(0, strlen($characters) - 1) ];
-
-			// if token contains no naughty words...
-			if (enrolTokenManagerTokenContainsNaughtyWords($token) === false) {
-
-				// check the db to see if token exists already
-				if ($DB->count_records('enrol_token_tokens', array('id' => $token)) === 0) $goodToken = true;
-			}
-		}
-
-		// add generated token to list
-		$tokens[] = $token;
+	// get or create the cohort
+	$cohortid = (empty($data->cohortid) === true) ? 0 : $data->cohortid;
+	if (empty($data->cohortnew) === false) {
+		$cohort_idnumber = preg_replace('/\s+/', '', strtolower(substr($data->cohortnew, 0, 99)));
+		$cohortid = enrol_token_manager_create_cohort_id($data->cohortnew, $cohort_idnumber);
 	}
 
-	// add tokens to persistent data store in a transaction so we can rollback if any can't be added
-	if (($transaction = $DB->start_delegated_transaction()) === null) throw new coding_exception('Invalid delegated transaction object');
+	// store the tokens in the database (transacted)
+	enrol_token_manager_insert_tokens($cohortid, $data->course, $tokens, $data->seatspertoken, $data->expirydate);
 
-	try {
-
-		// if a new cohort has been specified...
-		$cohortid = (empty($data->cohortid) === true) ? 0 : $data->cohortid;
-		 // default to cohort in drop down selection list
-		if (empty($data->cohortnew) === false) {
-			$cohort = new stdClass();
-			$cohort->contextid = $context->id;
-			$cohort->name = $data->cohortnew;
-			$cohort->idnumber = preg_replace('/\s+/', '', strtolower(substr($data->cohortnew, 0, 99)));
-			 // remove whitespace from shortened, lowercased name
-			$cohort->description = '<p>' . $cohort->name . '</p>';
-			$cohort->descriptionformat = 1;
-			$cohort->component = '';
-			$cohort->timecreated = time();
-			$cohort->timemodified = $cohort->timecreated;
-
-			// add record and get new id
-			$cohortid = $DB->insert_record('cohort', $cohort);
-		}
-
-		foreach ($tokens as $token) {
-
-			// add token usage record
-			$tokenRec = new stdClass();
-			$tokenRec->id = $token;
-			$tokenRec->cohortid = $cohortid;
-			$tokenRec->courseid = $data->course;
-			$tokenRec->numseats = $data->seatspertoken;
-			$tokenRec->seatsavailable = $tokenRec->numseats;
-			$tokenRec->createdby = $USER->id;
-			$tokenRec->timecreated = time();
-			$tokenRec->timeexpire = ($data->expirydate == 0) ? 0 : ($data->expirydate + (24 * 60 * 60));
-			 // expiry date plus 24 hours (end of the expiry day)
-			if ($DB->insert_record_raw('enrol_token_tokens', $tokenRec, false, false, true) === false) throw new Excpetion('token storage failed');
-		}
-
-		// commit the transaction
-		$transaction->allow_commit();
-	}
-	catch(Exception $e) {
-		$transaction->rollback($e);
-
-		notice("There was an error storing the generated tokens into the database. Please try again.");
-
-		exit();
-	}
-
+	// construct a summary of this action to send
 	$course = get_course($data->course);
 	$data->coursename = $course->fullname;
 	$data->tokennumberplural = ($data->tokennumber > 1) ? 's' : '';
@@ -241,15 +158,14 @@ else {
 	$data->wwwroot = $CFG->wwwroot;
 	$data->tokens = implode(', ', $tokens);
 	$data->adminsignoff = generate_email_signoff();
-	 // moodlelib
 
 	// get text to use for on-screen notice and email
-	// $messagehtml = ; // get_string('noticetext', 'block_enrol_token_manager', $data);
 	$array = (array) $data;
 	$array = array_combine(
 		array_map(function($k){ return '{'.$k.'}'; }, array_keys($array)),
 		$array
 	);
+	$message_display = get_string('noticetext', 'block_enrol_token_manager', $data);
 	// print_r($array);
 
 	$messagehtml = str_replace(array_keys($array), $array, format_text($data->mailbody));
@@ -287,7 +203,8 @@ else {
 		}
 	}
 
-	notice($messagehtml, $pageurl);
+
+	notice($message_display, $pageurl);
 	echo "<p><a href='/blocks/enrol_token_manager/viewrevoke_tokens.php'>View or revoke tokens</a></p>";
 
 }

@@ -102,9 +102,9 @@ HTML / Markdown is ok.
 $string['mailsubject_default'] = 'Your registration token(s) for Moodle';
 $string['mailbody_default'] = 'Hello,
 
-Please find below {tokennumber} token(s) that can be used to enrol onto Moodle. Use the link below to open the registration page:
+Please find below {tokennumber} token(s) that can be used to enrol onto Moodle.
 
-{wwwroot}/auth/token/login.php?token={tokens}
+{tokens}
 
 Cheers,
 {adminsignoff}';
