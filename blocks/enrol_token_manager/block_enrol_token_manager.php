@@ -14,6 +14,7 @@ class block_enrol_token_manager extends block_base {
 	}
 
 	function get_content() {
+		global $CFG;
 
 		if ($this->content !== NULL) {
 			return $this->content;
@@ -32,17 +33,17 @@ class block_enrol_token_manager extends block_base {
 
 		// view tokens link
 		if ($canview) {
-			$content[] = html_writer::link(new moodle_url('/blocks/enrol_token_manager/viewrevoke_tokens.php'), get_string('linkTextViewTokens', 'block_enrol_token_manager'));
+			$content[] = html_writer::link(new moodle_url($CFG->wwwroot . '/blocks/enrol_token_manager/viewrevoke_tokens.php'), get_string('linkTextViewTokens', 'block_enrol_token_manager'));
 		}
 
 		// create tokens link
 		if ($cancreate) {
-			$content[] = html_writer::link(new moodle_url('/blocks/enrol_token_manager/create_tokens.php'), get_string('linkTextCreateTokens', 'block_enrol_token_manager'));
+			$content[] = html_writer::link(new moodle_url($CFG->wwwroot . '/blocks/enrol_token_manager/create_tokens.php'), get_string('linkTextCreateTokens', 'block_enrol_token_manager'));
 		}
 
 		// revoke tokens link
 		if ($canrevoke) {
-			$content[] = html_writer::link(new moodle_url('/blocks/enrol_token_manager/viewrevoke_tokens.php'), get_string('linkTextRevokeTokens', 'block_enrol_token_manager'));
+			$content[] = html_writer::link(new moodle_url($CFG->wwwroot . '/blocks/enrol_token_manager/viewrevoke_tokens.php'), get_string('linkTextRevokeTokens', 'block_enrol_token_manager'));
 		}
 
 		if ($cancreate || $canrevoke || $canview) {
