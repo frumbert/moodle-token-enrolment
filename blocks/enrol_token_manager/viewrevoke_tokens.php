@@ -166,7 +166,7 @@ if (($data = $form->get_data()) !== null) {
 		// bottom revoke button
 		if (($canRevoke === true) && (count($tokens) > 10)) $output.= $actionButton;
 
-		$attributes = array('method' => 'post', 'action' => new moodle_url($_SERVER['PHP_SELF']), 'id' => 'viewRevokeForm');
+		$attributes = array('method' => 'post', 'action' => new moodle_url($CFG->wwwroot . '/blocks/enrol_token_manager/viewrevoke_tokens.php'), 'id' => 'viewRevokeForm');
 		$output = html_writer::tag('form', $output, $attributes);
 
 		echo $output;
