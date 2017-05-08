@@ -19,7 +19,7 @@ Viewing Tokens
 
 ## demo
 there's a demo that lets you quickly enrol a dummy user into a moodle site, and a list of tokens you can try.
-http://wp2moodle.coursesuite.ninja/token-enrolment/.
+http://wp2moodle.coursesuite.ninja/docs/token-enrolment/demo/.
 
 ##installation
 Note: last checked with Moodle 3.1.1+ but should be fine with 2.7 or above.
