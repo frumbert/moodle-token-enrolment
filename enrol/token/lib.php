@@ -21,16 +21,13 @@
  * token enrolment plugin.
  *
  * @package    enrol_token
- * @copyright  2013 CourseSuite
- * @link http://coursesuite.ninja
+ * @copyright  2013 avide elearning
+ * @link http://www.avide.com.au
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * token enrolment plugin implementation.
- * @author Petr Skoda
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+require_once("$CFG->dirroot/cohort/lib.php");
+
 class enrol_token_plugin extends enrol_plugin
 {
 
@@ -282,7 +279,7 @@ class enrol_token_plugin extends enrol_plugin
         global $DB, $USER, $SESSION, $CFG;
 
         // get token record
-        $tokenRec = $DB->get_record('enrol_token_tokens', array('id' => $tokenValue), 'courseid,seatsavailable,timeexpire');
+        $tokenRec = $DB->get_record('enrol_token_tokens', array('id' => $tokenValue), 'courseid,seatsavailable,timeexpire,cohortid');
 
         // use default plugin values for instance data if no token record available (required for throttling values)
         $settings = ($tokenRec === false) ? $this->getDefaultValuesAsObject() : $this->getInstanceDataForCourse($tokenRec->courseid);
@@ -298,8 +295,9 @@ class enrol_token_plugin extends enrol_plugin
         // did token record exist? - this has to be checked *after* throttling is taken care of
         if ($tokenRec === false) return 2;
 
-        // set out parameter
+        // things we need
         $courseId = $tokenRec->courseid;
+        $cohortid = $tokenRec->cohortid;
 
         // ensure course is enrollable using token
         $retVal = $this->isEnrolable($settings);
@@ -329,6 +327,9 @@ class enrol_token_plugin extends enrol_plugin
 
             // enrol the user in the course
             $this->enrol_user($settings, $USER->id, $settings->roleid, $timestart, $timeend);
+
+            // add the user to the cohort for this enrolment (cohort/lib.php)
+            cohort_add_member($cohortid, $USER->id);
 
             // decrement the seats available on the token
             $tokenRec->seatsavailable--;
