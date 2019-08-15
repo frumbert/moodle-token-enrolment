@@ -78,7 +78,7 @@ $string['sendcoursewelcomemessage_help'] = 'If enabled, users receive a welcome 
 $string['status'] = 'Enable existing enrolments';
 $string['status_desc'] = 'Enable token enrolment method in new courses.';
 $string['status_help'] = 'If disabled all existing token enrolments are suspended and new users can not enrol.';
-$string['tokeninput'] = 'Has your employer or Job Network Agency issued you with a Pre-paid token number? Please enter it here.';
+$string['tokeninput'] = 'Has your employer or job network agency issued you with an access token? Enter it below.';
 $string['tokenexpired'] = 'Sorry, that token has expired and can no longer be used for enrolments.';
 $string['toomanyattempts'] = 'Too many tokens have been entered in a short time. You must now wait some time before entering any other tokens.';
 $string['token:config'] = 'Configure token enrol instances';
@@ -98,6 +98,8 @@ $string['userthrottlingperiod_help'] = 'Use this value to stop possible token-gu
 $string['welcometocourse'] = 'Welcome to {$a}';
 $string['welcometocoursetext'] = 'Welcome to {$a->coursename}!
 
-If you have not done so already, you should edit your profile page so that we can learn more about you:
+If you have not done so already, you should edit your profile page:
 
   {$a->profileurl}';
+$string['enrol_header'] = 'Enrol using a token';
+$string['enrol_label'] = 'Token:';
