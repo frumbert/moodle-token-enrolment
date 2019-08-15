@@ -142,9 +142,11 @@ else {
 
 	// get or create the cohort
 	$cohortid = (empty($data->cohortid) === true) ? 0 : $data->cohortid;
-	if (empty($data->cohortnew) === false) {
+	if (!empty($data->cohortnew)) {
 		$cohort_idnumber = preg_replace('/\s+/', '', strtolower(substr($data->cohortnew, 0, 99)));
 		$cohortid = enrol_token_manager_create_cohort_id($data->cohortnew, $cohort_idnumber);
+	} else {
+		$cohortid = $data->cohortexisting;
 	}
 
 	// store the tokens in the database (transacted)
