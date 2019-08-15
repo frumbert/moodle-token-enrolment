@@ -51,7 +51,10 @@ class enrol_token_enrol_form extends moodleform
 
         $mform->addElement('html', '<div id="tokenenrolarea">');
 
-        $mform->addElement('text', 'enroltoken', get_string('tokeninput', 'enrol_token'), array('id' => 'enroltoken_' . $instance->id));
+        $mform->addElement('html', '<h3>' . get_string('enrol_header', 'enrol_token') . '</h3>');
+        $mform->addElement('html', '<p>' . get_string('tokeninput', 'enrol_token') . '</p>');
+
+        $mform->addElement('text', 'enroltoken', get_string('enrol_label', 'enrol_token'), array('id' => 'enroltoken_' . $instance->id));
         $mform->setType('enroltoken', PARAM_ALPHANUMEXT);
 
         $mform->addElement('submit', 'submitbutton', get_string('enrolme', 'enrol_token'));
