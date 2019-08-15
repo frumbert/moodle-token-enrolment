@@ -48,12 +48,12 @@ class create_enrol_tokens_form extends moodleform
 		$mform->setType('prefix', PARAM_ALPHANUMEXT);
 
 		// seats per token
-		$mform->addElement('text', 'seatspertoken', get_string('promptseats', 'block_enrol_token_manager'), 'maxlength="3" size="3"');
+		$mform->addElement('text', 'seatspertoken', get_string('promptseats', 'block_enrol_token_manager'), 'maxlength="5" size="3"');
 		$mform->addHelpButton('seatspertoken', 'promptseats', 'block_enrol_token_manager');
 		$mform->setType('seatspertoken', PARAM_INT);
 
 		// number of tokens
-		$mform->addElement('text', 'tokennumber', get_string('prompttokennum', 'block_enrol_token_manager'), 'maxlength="3" size="3"');
+		$mform->addElement('text', 'tokennumber', get_string('prompttokennum', 'block_enrol_token_manager'), 'maxlength="4" size="3"');
 		$mform->addHelpButton('tokennumber', 'prompttokennum', 'block_enrol_token_manager');
 		$mform->setType('tokennumber', PARAM_INT);
 
@@ -91,10 +91,10 @@ class create_enrol_tokens_form extends moodleform
 		$errors = parent::validation($data, $files);
 
 		// seats per token
-		if (($data['seatspertoken'] < 1) || ($data['seatspertoken'] > 500)) $errors['seatspertoken'] = get_string('seatsoutofrange', 'block_enrol_token_manager');
+		if (($data['seatspertoken'] < 1) || ($data['seatspertoken'] > 10000)) $errors['seatspertoken'] = get_string('seatsoutofrange', 'block_enrol_token_manager');
 
 		// number of token
-		if (($data['tokennumber'] < 1) || ($data['tokennumber'] > 500)) $errors['tokennumber'] = get_string('tokensoutofrange', 'block_enrol_token_manager');
+		if (($data['tokennumber'] < 1) || ($data['tokennumber'] > 10000)) $errors['tokennumber'] = get_string('tokensoutofrange', 'block_enrol_token_manager');
 
 		// email address
 		if ((isset($data['emailaddress']) === true) && (trim($data['emailaddress'] != ''))) {

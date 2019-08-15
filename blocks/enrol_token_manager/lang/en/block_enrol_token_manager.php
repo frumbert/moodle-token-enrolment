@@ -65,8 +65,8 @@ $string['prompttokennum'] = 'Number of tokens to produce';
 $string['prompttokennum_help'] = 'Enter the number of tokens you want to generate using these details (example: 10; must be more than 0 and less than 501)';
 
 $string['revoketokens'] = 'Revoke Selected Tokens';
-$string['seatsoutofrange'] = 'The number of enrolments per Token cannnot be zero, negative or larger than 500';
-$string['tokensoutofrange'] = 'The number of Tokens to produce cannnot be zero, negative or larger than 500';
+$string['seatsoutofrange'] = 'The number of enrolments per Token cannnot be zero, negative or larger than 10000';
+$string['tokensoutofrange'] = 'The number of Tokens to produce cannnot be zero, negative or larger than 10000';
 $string['viewtokens'] = 'View Tokens';
 
 $string['token_delete_error'] = 'There was a problem revoking the tokens - please double-check that they have in fact been deleted by re-searching for them';
