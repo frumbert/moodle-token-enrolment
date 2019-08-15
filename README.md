@@ -7,7 +7,7 @@ Note: Assumes email-based registrations with auto-generated passwords
     - Use WooCommerce or MarketPress? Try https://github.com/frumbert/wooMoodleTokenEnrolment
 - Stop general registrations and limit them to only people who know the token code (sort of like a password for allowing registrations)
 - Prevent your learners from having to self-enrol in courses once they are signed up (so you don't have to also train them on how that works)
-- ... Profit?
+- If used in conjunction with Cohort Enrolment you can easily enrol users into multiple courses with just one token
 
 ## screenshots
 
@@ -19,16 +19,16 @@ Viewing Tokens
 
 ## demo
 there's a demo that lets you quickly enrol a dummy user into a moodle site, and a list of tokens you can try.
-http://wp2moodle.coursesuite.ninja/docs/token-enrolment/demo/.
+http://wordpress.frumbert.org/.
 
 ##installation
-Note: last checked with Moodle 3.1.1+ but should be fine with 2.7 or above.
-extract the folders into moodle; there's a block, an auth plugin, and an enrolment plugin. You'll need to activate the plugins.
+Note: last checked with Moodle 3.4.6+ but should be fine with 2.7 or above.
+extract the folders into moodle; there's a block, an *optional* auth plugin, and an enrolment plugin. You'll need to activate the plugins.
 
 ## what the plugins do
 the block plugin lets admins or token managers quickly access the tools for generating and reporting on tokens
 
-the auth plugin lets users sign up with their email and a token. it generates a password and emails that to them but logs them in directly and opens the course the token is for. You can modify the email message using language string customisation. this requires the enrol plugin to be active and that token enrolment is enabled for the course(s).
+the auth plugin lets users sign up with their email and a token. it generates a password and emails that to them but logs them in directly and opens the course the token is for. You can modify the email message using language string customisation. this requires the enrol plugin to be active and that token enrolment is enabled for the course(s). you have to direct people to this alternate login page https://<your-moodle-site>/auth/token/login.php
 
 the enrol plugin is where the actual enrolment work happens, and has functionality of the course enrol screen.
 
