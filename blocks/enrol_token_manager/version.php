@@ -2,7 +2,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2019081500;   // The (date) version of this plugin
+$plugin->version  = 2019121200;   // The (date) version of this plugin
 $plugin->requires  = 2013050100;        // Requires this Moodle version
 
 $plugin->component = 'block_enrol_token_manager';

@@ -215,6 +215,8 @@ class enrol_token_plugin extends enrol_plugin
         $ip_throttling_period = isset($settings->ipthrottlingperiod) ? $settings->ipthrottlingperiod : 0;
         $user_throttling_period = isset($settings->userthrottlingperiod) ? $settings->userthrottlingperiod : 0;
 
+        $insert_record = true;
+
         // add a token usage record only if token in question hasn't been used recently by this user
         if (($ip_throttling_period > 0) && ($DB->record_exists_select('enrol_token_usage', 'ip = \'' . getremoteaddr() . '\' AND token = \'' . $token . '\' AND timecreated > ' . (time() - ($ip_throttling_period * 60))) === false)) {
             if (($userId !== 0) && ($user_throttling_period > 0) && ($DB->record_exists_select('enrol_token_usage', 'userid = ' . $userId . ' AND token = \'' . $token . '\'  AND timecreated > ' . (time() - ($user_throttling_period * 60))) === false)) {
@@ -331,6 +333,9 @@ class enrol_token_plugin extends enrol_plugin
             // add the user to the cohort for this enrolment (cohort/lib.php)
             cohort_add_member($cohortid, $USER->id);
 
+            // record this token enrolment for this user so we have an easy track of its usage
+            $this->record_token($USER->id, $tokenValue);
+
             // decrement the seats available on the token
             $tokenRec->seatsavailable--;
 
@@ -347,7 +352,7 @@ class enrol_token_plugin extends enrol_plugin
             $transaction->rollback($e);
 
             // if token got used up between first check and our update, return same error value as previous 'no seats available' error
-            if ($e->code == - 5150) return 3;
+            if ($e->code == -5150) return 3;
 
             return 5;
         }
@@ -421,6 +426,15 @@ class enrol_token_plugin extends enrol_plugin
         $output = ob_get_clean();
 
         return $OUTPUT->box($output);
+    }
+
+    private function record_token($userid, $token) {
+        global $DB;
+        $record = new stdClass();
+        $record->token = $token;
+        $record->userid = $userId;
+        $record->timecreated = time();
+        $DB->insert_record('enrol_token_log', $record, false);
     }
 
     /**
@@ -519,7 +533,7 @@ class enrol_token_plugin extends enrol_plugin
         }
 
         // Directly emailing welcome message rather than using messaging.
-        email_to_user($user, $contact, $subject, $messagetext, $messagehtml);
+        return email_to_user($user, $contact, $subject, $messagetext, $messagehtml);
     }
 
     /**

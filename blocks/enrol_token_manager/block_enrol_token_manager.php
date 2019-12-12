@@ -6,7 +6,8 @@ class block_enrol_token_manager extends block_base {
 	}
 
 	function applicable_formats() {
-		return array('site' => true);
+		return array('all' => true, 'mod' => false, 'my' => true, 'admin' => true,
+                     'tag' => false, 'site' => true);
 	}
 
 	function can_hide_show_instance() {
@@ -34,6 +35,7 @@ class block_enrol_token_manager extends block_base {
 		// view tokens link
 		if ($canview) {
 			$content[] = html_writer::link(new moodle_url($CFG->wwwroot . '/blocks/enrol_token_manager/viewrevoke_tokens.php'), get_string('linkTextViewTokens', 'block_enrol_token_manager'));
+			$content[] = html_writer::link(new moodle_url($CFG->wwwroot . '/blocks/enrol_token_manager/view_tokens_usage.php'), get_string('view_token_usage', 'block_enrol_token_manager'));
 		}
 
 		// create tokens link

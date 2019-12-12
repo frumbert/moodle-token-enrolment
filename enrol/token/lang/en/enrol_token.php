@@ -89,7 +89,7 @@ $string['tokendoesntexist'] = 'Sorry, that token is not valid for enrolment into
 $string['unenrol'] = 'Unenrol user';
 $string['unenrolselfconfirm'] = 'Do you really want to unenrol yourself from course "{$a}"?';
 $string['unenroluser'] = 'Do you really want to unenrol "{$a->user}" from course "{$a->course}"?';
-$string['userthrottlingperiod'] = 'IP throttling period (mins)';
+$string['userthrottlingperiod'] = 'User throttling period (mins)';
 $string['userthrottlingperiod_desc'] = 'The period, in minutes, that a user account can be used to enter 10 tokens before they are disallowed from entering more';
 $string['userthrottlingperiod_help'] = 'Use this value to stop possible token-guessing attempts. ' .
                                        'For instance, a value of 10 means that a user account can only be used to try a maximum of 10 tokens in a 10 minute period. ' .

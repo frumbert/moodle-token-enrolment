@@ -22,7 +22,7 @@
         <INDEX NAME="cohortid-courseid" UNIQUE="false" FIELDS="cohortid, courseid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="enrol_token_usage" COMMENT="Holds information about enrolment token usage">
+    <TABLE NAME="enrol_token_usage" COMMENT="Holds information about enrolment token ip throttling">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="token" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false"/>
@@ -37,6 +37,21 @@
         <INDEX NAME="token" UNIQUE="false" FIELDS="token"/>
         <INDEX NAME="userid-timecreated" UNIQUE="false" FIELDS="userid, timecreated"/>
         <INDEX NAME="ip-timecreated" UNIQUE="false" FIELDS="ip, timecreated"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_token_log" COMMENT="Holds information about enrolment token usage">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="token" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="token" UNIQUE="false" FIELDS="token"/>
+        <INDEX NAME="userid-timecreated" UNIQUE="false" FIELDS="userid, timecreated"/>
       </INDEXES>
     </TABLE>
   </TABLES>

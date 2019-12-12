@@ -10,6 +10,7 @@ $string['enrol_token_manager:viewtokens'] = 'View Enrolment Tokens';
 $string['linkTextCreateTokens'] = 'Create new enrolment tokens';
 $string['linkTextRevokeTokens'] = 'Revoke enrolment tokens';
 $string['linkTextViewTokens'] = 'View enrolment token details';
+$string['view_token_usage'] = 'View token usage';
 $string['nopagepermission'] = 'You do not have suitable persmissions to view the page';
 
 $string['noticetext'] = '<p>Hello,</p>' .
@@ -68,6 +69,7 @@ $string['revoketokens'] = 'Revoke Selected Tokens';
 $string['seatsoutofrange'] = 'The number of enrolments per Token cannnot be zero, negative or larger than 10000';
 $string['tokensoutofrange'] = 'The number of Tokens to produce cannnot be zero, negative or larger than 10000';
 $string['viewtokens'] = 'View Tokens';
+$string['viewusers'] = 'View Users';
 
 $string['token_delete_error'] = 'There was a problem revoking the tokens - please double-check that they have in fact been deleted by re-searching for them';
 
