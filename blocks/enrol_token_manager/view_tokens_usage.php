@@ -1,6 +1,9 @@
 <?php
 require ('../../config.php');
 
+$CFG->debug = (E_ALL | E_STRICT);
+$CFG->debugdisplay = 1;
+
 require_once ($CFG->libdir . '/formslib.php');
 require_once ($CFG->libdir . '/accesslib.php');
 require_once ($CFG->libdir . '/datalib.php');
@@ -68,29 +71,32 @@ if (($data = $form->get_data()) !== null) {
 
 	// build SQL statement from given options
 	$where = '';
-	if ($data->token != '') $where = "WHERE t.token LIKE '" . str_replace(['*', '?'], ['%', '_'], $data->token) . "'";
-	$fields = 't.timecreated, ' .
+	if ($data->token != '') $where = "WHERE t.token LIKE ?";
+	$fields = 't.timecreated, c.id courseid, c.fullname coursename, ' .
 				\user_picture::fields('u', ['idnumber'], 'userid') .
 				get_extra_user_fields_sql($context, 'u', '', ['email', 'idnumber']) .
 				' ';
-	$from = '{user} u INNER JOIN {enrol_token_log} t ON u.id = t.userid';
+	$from = '{user} u INNER JOIN {enrol_token_log} t ON u.id = t.userid INNER JOIN {enrol_token_tokens} tt ON tt.id = t.token INNER JOIN {course} c ON tt.courseid = c.id';
 	$order = 't.timecreated DESC';
 
-	$data = $DB->get_records_sql("SELECT {$fields} FROM {$from} {$where} ORDER BY {$order}", null);
+   // echo "SELECT {$fields} FROM {$from} {$where} ORDER BY {$order}";
+
+	$data = $DB->get_records_sql("SELECT {$fields} FROM {$from} {$where} ORDER BY {$order}", [str_replace(['*', '?'], ['%', '_'], $data->token)]);
 	if (count($data) === 0) {
 		$OUTPUT->error_text('No records');
 	} else {
 		$table = new html_table();
 		$table->id = 'viewtokenusage';
-		$table->head = ['User','Date used'];
+		$table->head = ['User','Date used',get_string('course')];
 		$rows = [];
 		foreach ($data as $record) {
 
-            $url = new \moodle_url('/user/view.php', array('id' => $scouser->userid, 'course' => $course->id));
+            $url = new \moodle_url('/user/view.php', array('id' => $record->userid, 'course' => $record->courseid));
             $user = \html_writer::link($url, fullname($record));
+            $coursename = $record->coursename;
             $date = userdate($record->timecreated);
 
-			$rows[] = [$user, $date];
+			$rows[] = [$user, $date, $coursename];
 		}
 		$table->data = $rows;
 		echo html_writer::table($table);
