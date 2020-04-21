@@ -72,7 +72,7 @@ if (($data = $form->get_data()) !== null) {
 	// build SQL statement from given options
 	$where = '';
 	if ($data->token != '') $where = "WHERE t.token LIKE ?";
-	$fields = 't.timecreated, c.id courseid, c.fullname coursename, ' .
+	$fields = 't.timecreated, c.id courseid, c.fullname coursename, t.token, ' .
 				\user_picture::fields('u', ['idnumber'], 'userid') .
 				get_extra_user_fields_sql($context, 'u', '', ['email', 'idnumber']) .
 				' ';
@@ -87,7 +87,7 @@ if (($data = $form->get_data()) !== null) {
 	} else {
 		$table = new html_table();
 		$table->id = 'viewtokenusage';
-		$table->head = ['User','Date used',get_string('course')];
+		$table->head = ['Token', 'User','Date used',get_string('course')];
 		$rows = [];
 		foreach ($data as $record) {
 
@@ -97,7 +97,7 @@ if (($data = $form->get_data()) !== null) {
             $coursename = \html_writer::link($url, $record->coursename);
             $date = userdate($record->timecreated);
 
-			$rows[] = [$user, $date, $coursename];
+			$rows[] = [$record->token, $user, $date, $coursename];
 		}
 		$table->data = $rows;
 		echo html_writer::table($table);
