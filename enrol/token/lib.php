@@ -523,7 +523,7 @@ class enrol_token_plugin extends enrol_plugin
         if (!empty($CFG->coursecontact)) {
             $croles = explode(',', $CFG->coursecontact);
             list($sort, $sortparams) = users_order_by_sql('u');
-            $rusers = get_role_users($croles, $context, true, '', 'r.sortorder ASC, ' . $sort, null, '', '', '', '', $sortparams);
+            $rusers = get_role_users($croles, $context, true, 'ra.id, r.sortorder, u.lastname, u.firstname, u.id', 'r.sortorder ASC, ' . $sort, null, '', '', '', '', $sortparams);
         }
         if ($rusers) {
             $contact = reset($rusers);
