@@ -93,7 +93,8 @@ if (($data = $form->get_data()) !== null) {
 
             $url = new \moodle_url('/user/view.php', array('id' => $record->userid, 'course' => $record->courseid));
             $user = \html_writer::link($url, fullname($record));
-            $coursename = $record->coursename;
+            $url = new \moodle_url('/course/view.php', array('id' => $record->courseid));
+            $coursename = \html_writer::link($url, $record->coursename);
             $date = userdate($record->timecreated);
 
 			$rows[] = [$user, $date, $coursename];
