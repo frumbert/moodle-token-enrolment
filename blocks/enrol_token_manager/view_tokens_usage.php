@@ -15,7 +15,7 @@ class view_enrol_token_usage_form extends moodleform
 		$mform = $this->_form;
 
 		// filters
-		$mform->addElement('header', 'filter', get_string('view_token_usage', 'block_enrol_token_manager'));
+		$mform->addElement('header', 'filter', get_string('filter'));
 
 		$mform->addElement('text', 'token', get_string('promptfiltertoken', 'block_enrol_token_manager'), 'maxlength="12" size="12"');
 		$mform->addHelpButton('token','promptfiltertoken','block_enrol_token_manager');
@@ -35,12 +35,12 @@ function appendSqlWhereClause(&$existingClause, $newClause) {
 	$existingClause.= (($existingClause != '') ? ' AND ' : '') . $newClause;
 }
 
-////////////////////////////////////////////////////////////////////////////////
+
 $context = context_system::instance();
 
 $site = get_site();
 
-$pagename = get_string('pageNameViewRevokeTokens', 'block_enrol_token_manager');
+$pagename = get_string('pageNameViewTokenUsage', 'block_enrol_token_manager');
 $pageurl = '/blocks/enrol_token_manager/view_token_usage.php';
 
 // page setup
@@ -49,7 +49,7 @@ $PAGE->set_context($context);
 $PAGE->set_pagelayout('standard');
 $PAGE->add_body_class('viewtokenusage');
 $PAGE->set_title("$site->fullname: $pagename");
-$PAGE->set_heading('View Enrolment Token Usage');
+$PAGE->set_heading(get_string('view_token_usage', 'block_enrol_token_manager'));
 $PAGE->navbar->add($pagename);
 
 echo $OUTPUT->header();
@@ -68,10 +68,10 @@ if (($data = $form->get_data()) !== null) {
 
 	// build SQL statement from given options
 	$where = '';
-	if ($data->token != '') $where = "WHERE t.token LIKE '" . str_replace(array('*', '?'), array('%', '_'), $data->token) . "'");
+	if ($data->token != '') $where = "WHERE t.token LIKE '" . str_replace(['*', '?'], ['%', '_'], $data->token) . "'";
 	$fields = 't.timecreated, ' .
-				\user_picture::fields('u', array('idnumber'), 'userid') .
-				get_extra_user_fields_sql($context, 'u', '', array('email', 'idnumber')) .
+				\user_picture::fields('u', ['idnumber'], 'userid') .
+				get_extra_user_fields_sql($context, 'u', '', ['email', 'idnumber']) .
 				' ';
 	$from = '{user} u INNER JOIN {enrol_token_log} t ON u.id = t.userid';
 	$order = 't.timecreated DESC';
@@ -99,4 +99,3 @@ if (($data = $form->get_data()) !== null) {
 }
 
 echo $OUTPUT->footer();
-?>

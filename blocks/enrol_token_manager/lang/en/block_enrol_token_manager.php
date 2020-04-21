@@ -70,6 +70,7 @@ $string['seatsoutofrange'] = 'The number of enrolments per Token cannnot be zero
 $string['tokensoutofrange'] = 'The number of Tokens to produce cannnot be zero, negative or larger than 10000';
 $string['viewtokens'] = 'View Tokens';
 $string['viewusers'] = 'View Users';
+$string['pageNameViewTokenUsage'] = 'View Enrolment Token usage';
 
 $string['token_delete_error'] = 'There was a problem revoking the tokens - please double-check that they have in fact been deleted by re-searching for them';
 
