@@ -432,7 +432,7 @@ class enrol_token_plugin extends enrol_plugin
         global $DB;
         $record = new stdClass();
         $record->token = $token;
-        $record->userid = $userId;
+        $record->userid = $userid;
         $record->timecreated = time();
         $DB->insert_record('enrol_token_log', $record, false);
     }
