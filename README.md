@@ -1,3 +1,8 @@
+# ARCHIVED REPO MAY 2020
+Please refer to my simplified version of this pluign available here: https://github.com/frumbert/enrol-token
+
+`+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-`
+
 # moodle-token-enrolment
 enrol users into moodle courses using one-time (or many-use) tokens.
 Note: Assumes email-based registrations with auto-generated passwords
